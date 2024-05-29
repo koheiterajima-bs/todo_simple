@@ -146,37 +146,20 @@ func updateSlice(jsonData []TodoList) []TodoList {
 		fmt.Println("無効なIDです。")
 	}
 
-	// judgeUpdateID2 := false
-
-	// // IDが確認できましたの項目を入れる
-	// for _, obj := range jsonData {
-	// 	if obj.ID == updateID {
-	// 		judgeUpdateID2 = true
-	// 	}
-	// }
-	// if judgeUpdateID2 {
-	// 	fmt.Println("IDが確認できました。")
-	// } else {
-	// 	fmt.Println("IDが確認できませんでした。")
-	// }
-
-	fmt.Println("Todoの内容を記載してください。")
-	var updateTodoContent string
-	fmt.Scan(&updateTodoContent)
-
-	judgeUpdateID := false
-
+	// この場合、関数から抜け出したいからreturnを使うのか、、
 	for i, obj := range jsonData {
 		if obj.ID == updateID {
-			jsonData[i].TodoContent = updateTodoContent
-			judgeUpdateID = true
-		}
-	}
+			fmt.Println("IDが確認できました。")
 
-	if judgeUpdateID {
-		fmt.Println("Todoの内容を更新しました。")
-	} else {
-		fmt.Println("一致するIDはありませんでした。")
+			fmt.Println("Todoの内容を記載してください。")
+			var updateTodoContent string
+			fmt.Scan(&updateTodoContent)
+
+			jsonData[i].TodoContent = updateTodoContent // TodoContentの更新
+			fmt.Println("Todoの内容を更新しました。")
+		}
+		fmt.Println("一致するIDがありませんでした。")
+		break // 上記のPrintlnを一致しなかったID分だけ繰り返したくないが、[the surrounding loop is unconditionally terminated (SA4004)]とエラーが出る。
 	}
 
 	// 【オブジェクトの番号を指定して更新するver】
