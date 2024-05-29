@@ -146,6 +146,9 @@ func updateSlice(jsonData []TodoList) []TodoList {
 		fmt.Println("無効なIDです。")
 	}
 
+	// boolによる変数設定(IDが一致すれば、if文を終える)
+	judgeUpdateID := false
+
 	for i, obj := range jsonData {
 		if obj.ID == updateID {
 			fmt.Println("IDが確認できました。")
@@ -156,9 +159,14 @@ func updateSlice(jsonData []TodoList) []TodoList {
 
 			jsonData[i].TodoContent = updateTodoContent // TodoContentの更新
 			fmt.Println("Todoの内容を更新しました。")
+			judgeUpdateID = true // trueに変え、下のif文をスルーする
+			break
 		}
+	}
+
+	// 一致するIDがなければ、falseのまま
+	if !judgeUpdateID {
 		fmt.Println("一致するIDがありませんでした。")
-		break // 上記のPrintlnを一致しなかったID分だけ繰り返したくないが、[the surrounding loop is unconditionally terminated (SA4004)]とエラーが出る。
 	}
 
 	// 【オブジェクトの番号を指定して更新するver】
