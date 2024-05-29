@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/google/uuid"
 )
 
@@ -114,17 +116,6 @@ func deleteSlice(jsonData []TodoList) []TodoList {
 		fmt.Println("一致するIDはありませんでした。")
 	}
 
-	// 【オブジェクトの番号を指定して削除するver】
-	// var deleteNumber int
-	// fmt.Scan(&deleteNumber)
-	// i := deleteNumber - 1
-	// jsonData = append(jsonData[:i], jsonData[i+1:]...)
-	// fmt.Println("i番目のTodo削除が完了しました。")
-
-	// 【スライスを空にして、全削除ver】
-	// jsonData = jsonData[:0]
-	// fmt.Println(jsonData)
-
 	return jsonData
 }
 
@@ -146,39 +137,52 @@ func updateSlice(jsonData []TodoList) []TodoList {
 		fmt.Println("無効なIDです。")
 	}
 
-	// boolによる変数設定(IDが一致すれば、if文を終える)
-	judgeUpdateID := false
-
-	for i, obj := range jsonData {
-		if obj.ID == updateID {
-			fmt.Println("IDが確認できました。")
-
-			fmt.Println("Todoの内容を記載してください。")
-			var updateTodoContent string
-			fmt.Scan(&updateTodoContent)
-
-			jsonData[i].TodoContent = updateTodoContent // TodoContentの更新
-			fmt.Println("Todoの内容を更新しました。")
-			judgeUpdateID = true // trueに変え、下のif文をスルーする
-			break
-		}
+	// jsonDataの各要素のIDを取り出して、UUIDスライスを作成
+	// jsonDataのままだと、構造体の型なのでそのままではsliceパッケージが使えない
+	ids := make([]uuid.UUID, len(jsonData))
+	for i, todo := range jsonData {
+		ids[i] = todo.ID
 	}
 
-	// 一致するIDがなければ、falseのまま
-	if !judgeUpdateID {
-		fmt.Println("一致するIDがありませんでした。")
+	// sliceパッケージを用い、updateIDがidsの中に含まれるかを探す
+	judgeUpdateID := slices.Contains(ids, updateID)
+
+	// sliceパッケージを用い、updateIDがidsの何番目にあるか探す
+	revealNumberUpdateID := slices.Index(ids, updateID)
+
+	if judgeUpdateID {
+		fmt.Println("IDが確認できました。")
+
+		fmt.Println("Todoの内容を記載してください。")
+		var updateTodoContent string
+		fmt.Scan(&updateTodoContent)
+
+		jsonData[revealNumberUpdateID].TodoContent = updateTodoContent // TodoContentの更新
+		fmt.Println("Todoの内容を更新しました。")
 	}
 
-	// 【オブジェクトの番号を指定して更新するver】
-	// fmt.Println("どのTodoを更新しますか？\n更新したいTodoの番号を入力してください。")
-	// var updateNumber int
-	// fmt.Scan(&updateNumber)
-	// fmt.Println("Todoの内容を記載してください。")
-	// var updateTodoContent string
-	// fmt.Scan(&updateTodoContent)
-	// i := updateNumber - 1
-	// jsonData[i].TodoContent = updateTodoContent
-	// fmt.Println("Todo更新が完了しました。")
+	// // boolによる変数設定(IDが一致すれば、if文を終える)
+	// judgeUpdateID := false
+
+	// for i, obj := range jsonData {
+	// 	if obj.ID == updateID {
+	// 		fmt.Println("IDが確認できました。")
+
+	// 		fmt.Println("Todoの内容を記載してください。")
+	// 		var updateTodoContent string
+	// 		fmt.Scan(&updateTodoContent)
+
+	// 		jsonData[i].TodoContent = updateTodoContent // TodoContentの更新
+	// 		fmt.Println("Todoの内容を更新しました。")
+	// 		judgeUpdateID = true // trueに変え、下のif文をスルーする
+	// 		break
+	// 	}
+	// }
+
+	// // 一致するIDがなければ、falseのまま
+	// if !judgeUpdateID {
+	// 	fmt.Println("一致するIDがありませんでした。")
+	// }
 
 	return jsonData
 }
