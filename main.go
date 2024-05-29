@@ -146,7 +146,6 @@ func updateSlice(jsonData []TodoList) []TodoList {
 		fmt.Println("無効なIDです。")
 	}
 
-	// この場合、関数から抜け出したいからreturnを使うのか、、
 	for i, obj := range jsonData {
 		if obj.ID == updateID {
 			fmt.Println("IDが確認できました。")
